@@ -29,9 +29,11 @@
     "lint": "concurrently \"npm run check-types\" \"npm run eslint:check\" \"npm run prettier:check\" \"npm run prettier:check:package.json\"",
     "prepare": "husky install && npm run build",
     "test": "hardhat test",
+    "test:boaspace": "hardhat test src/__tests__/boaspace/*.ts",
     "prettier:check": "prettier --check .",
     "prettier:check:package.json": "prettier-package-json --list-different",
-    "prettier:fix": "prettier --write ."
+    "prettier:fix": "prettier --write .",
+    "prettier:fix:boaspace": "prettier --write src/__tests__/boaspace/*.ts"
   },
   "types": "lib/index.d.ts",
   "resolutions": {
@@ -91,7 +93,7 @@
     "prettier": "^2.5.1",
     "prettier-package-json": "^2.6.3",
     "prettier-plugin-solidity": "^1.0.0-beta.13",
-    "seaport": "git+https://github.com/ProjectOpenSea/seaport.git#76e508657888e3ec84039e1da269c822826991ef",
+    "seaport": "git+https://github.com/bosagora/boa-space-contracts.git#b11dd35ed08c0f2a338d247e129dff41a066f495",
     "sinon": "^13.0.1",
     "sinon-chai": "^3.7.0",
     "solhint": "^3.3.7",

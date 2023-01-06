@@ -8859,9 +8859,9 @@ scryptsy@^1.2.1:
   dependencies:
     pbkdf2 "^3.0.3"
 
-"seaport@git+https://github.com/bosagora/boa-space-contracts.git#b11dd35ed08c0f2a338d247e129dff41a066f495":
+"seaport@git+https://github.com/bosagora/boa-space-contracts.git#35374900cc4f6ed2184b8ba751af5246f3a3f341":
   version "1.1.0"
-  resolved "git+https://github.com/bosagora/boa-space-contracts.git#b11dd35ed08c0f2a338d247e129dff41a066f495"
+  resolved "git+https://github.com/bosagora/boa-space-contracts.git#35374900cc4f6ed2184b8ba751af5246f3a3f341"
   dependencies:
     "@ethersproject/experimental" "^5.7.0"
     "@openzeppelin/contracts" "^4.8.0"

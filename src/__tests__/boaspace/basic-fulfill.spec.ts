@@ -6,7 +6,13 @@ import { parseEther } from "ethers/lib/utils";
 import { ethers, waffle } from "hardhat";
 import sinon from "sinon";
 import { ItemType, MAX_INT } from "../../constants";
-import { TestERC1155, TestERC721, AssetContractShared, SharedStorefrontLazyMintAdapter, SharedStorefrontLazyMintAdapter__factory } from "../../typechain";
+import {
+  TestERC1155,
+  TestERC721,
+  AssetContractShared,
+  SharedStorefrontLazyMintAdapter,
+  SharedStorefrontLazyMintAdapter__factory,
+} from "../../typechain";
 import { CreateOrderInput, CurrencyItem } from "../../types";
 import * as fulfill from "../../utils/fulfill";
 import { describeWithFixture } from "../utils/setup";
@@ -296,10 +302,7 @@ describeWithFixture(
         await secondApprovalAction.transactionMethods.transact();
 
         expect(
-          await testErc20.allowance(
-            fulfiller.address,
-            seaport.contract.address
-          )
+          await testErc20.allowance(fulfiller.address, seaport.contract.address)
         ).eq(MAX_INT);
 
         const thirdApprovalAction = actions[2];
@@ -573,10 +576,7 @@ describeWithFixture(
         await secondApprovalAction.transactionMethods.transact();
 
         expect(
-          await testErc20.allowance(
-            fulfiller.address,
-            seaport.contract.address
-          )
+          await testErc20.allowance(fulfiller.address, seaport.contract.address)
         ).eq(MAX_INT);
 
         const thirdApprovalAction = actions[2];
@@ -600,7 +600,9 @@ describeWithFixture(
         ).to.be.true;
 
         // approve to SharedStorefrontLazyMintAdapter
-        await assetToken.connect(fulfiller).setApprovalForAll(lazyMintAdapter.address, true);
+        await assetToken
+          .connect(fulfiller)
+          .setApprovalForAll(lazyMintAdapter.address, true);
 
         expect(
           await assetToken.isApprovedForAll(

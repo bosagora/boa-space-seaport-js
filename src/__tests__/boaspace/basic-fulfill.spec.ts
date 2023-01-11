@@ -41,8 +41,8 @@ describeWithFixture(
     const erc1155Amount2 = "7";
     const assetTokenAmount = "10";
 
-    const OPENSEA_DOMAIN = "opensea.io";
-    const OPENSEA_TAG = "360c6ebe";
+    const BOASPACE_DOMAIN = "boaspace.io";
+    const BOASPACE_TAG = "7f688786";
 
     const ZeroAddress = "0x0000000000000000000000000000000000000000";
 
@@ -265,7 +265,7 @@ describeWithFixture(
             { order: fourthOrder },
           ],
           accountAddress: fulfiller.address,
-          domain: OPENSEA_DOMAIN,
+          domain: BOASPACE_DOMAIN,
         });
 
         const approvalAction = actions[0];
@@ -356,11 +356,11 @@ describeWithFixture(
           (
             await fulfillAction.transactionMethods.buildTransaction()
           ).data?.slice(-8)
-        ).to.eq(OPENSEA_TAG);
+        ).to.eq(BOASPACE_TAG);
 
         const transaction = await fulfillAction.transactionMethods.transact();
 
-        expect(transaction.data.slice(-8)).to.eq(OPENSEA_TAG);
+        expect(transaction.data.slice(-8)).to.eq(BOASPACE_TAG);
 
         const balances = await Promise.all([
           testErc1155.balanceOf(offerer.address, nftId),
@@ -539,7 +539,7 @@ describeWithFixture(
             { order: fourthOrder },
           ],
           accountAddress: fulfiller.address,
-          domain: OPENSEA_DOMAIN,
+          domain: BOASPACE_DOMAIN,
         });
 
         const approvalAction = actions[0];
@@ -622,11 +622,11 @@ describeWithFixture(
           (
             await fulfillAction.transactionMethods.buildTransaction()
           ).data?.slice(-8)
-        ).to.eq(OPENSEA_TAG);
+        ).to.eq(BOASPACE_TAG);
 
         const transaction = await fulfillAction.transactionMethods.transact();
 
-        expect(transaction.data.slice(-8)).to.eq(OPENSEA_TAG);
+        expect(transaction.data.slice(-8)).to.eq(BOASPACE_TAG);
 
         const balances = await Promise.all([
           testErc1155.balanceOf(offerer.address, nftId),

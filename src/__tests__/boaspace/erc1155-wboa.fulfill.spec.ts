@@ -34,8 +34,8 @@ describeWithFixture(
     let tokenId: BigNumber;
     const assetTokenAmount = "10";
 
-    const OPENSEA_DOMAIN = "opensea.io";
-    const OPENSEA_TAG = "360c6ebe";
+    const BOASPACE_DOMAIN = "boaspace.io";
+    const BOASPACE_TAG = "7f688786";
 
     const ZeroAddress = "0x0000000000000000000000000000000000000000";
 
@@ -50,6 +50,9 @@ describeWithFixture(
 
       [offerer, zone, fulfiller, admin] = await ethers.getSigners();
       multicallProvider = new providers.MulticallProvider(ethers.provider);
+
+      console.log("offerer:", offerer.address);
+      console.log("fulfiller:", fulfiller.address);
 
       // Deploy AssetContractShared contract
       const name = "BOASPACE Collections";
@@ -181,7 +184,7 @@ describeWithFixture(
           order,
           unitsToFill: 2,
           accountAddress: fulfiller.address,
-          domain: OPENSEA_DOMAIN,
+          domain: BOASPACE_DOMAIN,
         });
 
         // approve to SharedStorefrontLazyMintAdapter
@@ -218,7 +221,7 @@ describeWithFixture(
         });
 
         const transaction = await fulfillAction.transactionMethods.transact();
-        expect(transaction.data.slice(-8)).to.eq(OPENSEA_TAG);
+        expect(transaction.data.slice(-8)).to.eq(BOASPACE_TAG);
         const receipt = await transaction.wait();
 
         const offererAssetTokenBalance = await assetToken.balanceOf(

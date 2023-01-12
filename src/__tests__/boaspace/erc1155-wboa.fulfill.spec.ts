@@ -288,6 +288,120 @@ describeWithFixture(
           .deposit({ value: parseEther("20").toString() });
       });
 
+      it("Listing: AssetContractShared <=> BOA(Native Token)", async () => {
+        const { seaport } = fixture;
+
+        standardCreateOrderInput = {
+          allowPartialFills: true,
+
+          offer: [
+            {
+              itemType: ItemType.ERC1155,
+              token: lazyMintAdapter.address,
+              amount: assetTokenAmount,
+              identifier: tokenId.toString()
+            }
+          ],
+          consideration: [
+            {
+              amount: parseEther("10").toString(),
+              recipient: offerer.address,
+            },
+          ],
+          // 2.5% fee
+          fees: [{ recipient: zone.address, basisPoints: 250 }],
+        };
+
+        console.log("standardCreateOrderInput:",
+          JSON.stringify(standardCreateOrderInput));
+
+        const { executeAllActions } = await seaport.createOrder(
+          standardCreateOrderInput,
+        );
+
+        const order = await executeAllActions();
+
+        expect(order.parameters.orderType).eq(OrderType.PARTIAL_OPEN);
+
+        const orderStatus = await seaport.getOrderStatus(
+          seaport.getOrderHash(order.parameters)
+        );
+
+        const ownerToTokenToIdentifierBalances =
+          await getBalancesForFulfillOrder(
+            order,
+            fulfiller.address,
+            multicallProvider
+          );
+
+        // console.log("first ownerToTokenToIdentifierBalances:",
+        //   JSON.stringify(ownerToTokenToIdentifierBalances, null, 4));
+
+        const { actions } = await seaport.fulfillOrder({
+          order,
+          unitsToFill: 2,
+          accountAddress: fulfiller.address,
+          domain: BOASPACE_DOMAIN,
+        });
+
+        // approve to SharedStorefrontLazyMintAdapter
+        await assetToken
+          .connect(offerer)
+          .setApprovalForAll(lazyMintAdapter.address, true);
+        expect(
+          await assetToken.isApprovedForAll(
+            offerer.address,
+            lazyMintAdapter.address
+          )
+        ).to.be.true;
+
+        expect(actions.length).to.eq(1);
+
+        const fulfillAction = actions[0];
+        expect(fulfillAction).to.be.deep.equal({
+          type: "exchange",
+          transactionMethods: fulfillAction.transactionMethods,
+        });
+
+        const transaction = await fulfillAction.transactionMethods.transact();
+        expect(transaction.data.slice(-8)).to.eq(BOASPACE_TAG);
+        const receipt = await transaction.wait();
+
+        const offererAssetTokenBalance = await assetToken.balanceOf(
+          offerer.address,
+          tokenId
+        );
+        const fulfillerAssetTokenBalance = await assetToken.balanceOf(
+          fulfiller.address,
+          tokenId
+        );
+        expect(offererAssetTokenBalance).eq(BigNumber.from(98));
+        expect(fulfillerAssetTokenBalance).eq(BigNumber.from(2));
+
+        const ownerToTokenToIdentifierBalances2 =
+          await getBalancesForFulfillOrder(
+            order,
+            fulfiller.address,
+            multicallProvider
+          );
+
+        // console.log("second ownerToTokenToIdentifierBalances:",
+        //   JSON.stringify(ownerToTokenToIdentifierBalances2, null, 4));
+
+        await verifyBalancesAfterFulfill({
+          ownerToTokenToIdentifierBalances,
+          order,
+          unitsToFill: 2,
+          orderStatus,
+          fulfillerAddress: fulfiller.address,
+          multicallProvider,
+          fulfillReceipt: receipt,
+        });
+
+        // Double check nft balances
+        expect(fulfillStandardOrderSpy).calledOnce;
+      });
+
       it("Listing: AssetContractShared <=> WBOA9(ERC20)", async () => {
         const { seaport } = fixture;
 
@@ -399,6 +513,158 @@ describeWithFixture(
         });
 
         // Double check nft balances
+        expect(fulfillStandardOrderSpy).calledOnce;
+      });
+    });
+
+    describe.only("[Buy now] I want to partially buy two separate ERC1155s", async () => {
+      beforeEach(async () => {
+        const { seaport, testErc1155 } = fixture;
+        console.log("seaport:", seaport.contract.address);
+
+        // mint AssetContractShared
+        const creatorContract = assetToken.connect(offerer);
+        const tokenQuantity = 100;
+        const tokenIndex = BigNumber.from(1);
+        const data =
+          "https://ipfs.io/ipfs/QmXdYWxw3di8Uys9fmWTmdariUoUgBCsdVfHtseL2dtEP7";
+        const buffer = ethers.utils.toUtf8Bytes(data);
+
+        tokenId = createTokenId(offerer.address, tokenIndex, tokenQuantity);
+        console.log(
+          "Combined tokenId: %s (%s)",
+          tokenId.toString(),
+          tokenId.toHexString()
+        );
+        await creatorContract.mint(
+          offerer.address,
+          tokenId,
+          tokenQuantity,
+          buffer
+        );
+        console.log("Token minted to:", offerer.address);
+
+        console.log(
+          "offerer: ",
+          await assetToken.balanceOf(offerer.address, tokenId)
+        );
+
+        // Deposit BOA from offerer to WBOA
+        await wboaToken
+          .connect(fulfiller)
+          .deposit({ value: parseEther("20").toString() });
+      });
+
+      it("ERC1155 <=> ETH", async () => {
+        const { seaport, testErc1155 } = fixture;
+
+        // Mint 10 and 5 ERC1155s to offerer
+        const nftId = "1";
+        await testErc1155.mint(offerer.address, nftId, 10);
+
+        standardCreateOrderInput = {
+          allowPartialFills: true,
+
+          offer: [
+            {
+              itemType: ItemType.ERC1155,
+              token: lazyMintAdapter.address,
+              amount: assetTokenAmount,
+              identifier: tokenId.toString()
+            },
+          ],
+          consideration: [
+            {
+              amount: parseEther("10").toString(),
+              recipient: offerer.address,
+            },
+          ],
+          // 2.5% fee
+          fees: [{ recipient: zone.address, basisPoints: 250 }],
+        };
+
+
+        const { executeAllActions } = await seaport.createOrder(
+          standardCreateOrderInput
+        );
+
+        const order = await executeAllActions();
+
+        expect(order.parameters.orderType).eq(OrderType.PARTIAL_OPEN);
+
+        const orderStatus = await seaport.getOrderStatus(
+          seaport.getOrderHash(order.parameters)
+        );
+
+        const ownerToTokenToIdentifierBalances =
+          await getBalancesForFulfillOrder(
+            order,
+            fulfiller.address,
+            multicallProvider
+          );
+
+        const { actions } = await seaport.fulfillOrder({
+          order,
+          unitsToFill: 2,
+          accountAddress: fulfiller.address,
+          domain: BOASPACE_DOMAIN,
+        });
+
+        // approve to SharedStorefrontLazyMintAdapter
+        await assetToken
+          .connect(offerer)
+          .setApprovalForAll(lazyMintAdapter.address, true);
+        expect(
+          await assetToken.isApprovedForAll(
+            offerer.address,
+            lazyMintAdapter.address
+          )
+        ).to.be.true;
+
+
+        expect(actions.length).to.eq(1);
+
+        const action = actions[0];
+
+        expect(action).to.deep.equal({
+          type: "exchange",
+          transactionMethods: action.transactionMethods,
+        });
+
+        const transaction = await action.transactionMethods.transact();
+
+        expect(transaction.data.slice(-8)).to.eq(BOASPACE_TAG);
+
+        const receipt = await transaction.wait();
+
+        const offererAssetTokenBalance = await assetToken.balanceOf(
+          offerer.address,
+          tokenId
+        );
+        const fulfillerAssetTokenBalance = await assetToken.balanceOf(
+          fulfiller.address,
+          tokenId
+        );
+        expect(offererAssetTokenBalance).eq(BigNumber.from(98));
+        expect(fulfillerAssetTokenBalance).eq(BigNumber.from(2));
+
+        const ownerToTokenToIdentifierBalances2 =
+          await getBalancesForFulfillOrder(
+            order,
+            fulfiller.address,
+            multicallProvider
+          );
+
+        await verifyBalancesAfterFulfill({
+          ownerToTokenToIdentifierBalances,
+          order,
+          unitsToFill: 2,
+          orderStatus,
+          fulfillerAddress: fulfiller.address,
+          multicallProvider,
+          fulfillReceipt: receipt,
+        });
+
         expect(fulfillStandardOrderSpy).calledOnce;
       });
     });

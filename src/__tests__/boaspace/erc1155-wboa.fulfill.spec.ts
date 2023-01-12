@@ -253,5 +253,137 @@ describeWithFixture(
         expect(fulfillStandardOrderSpy).calledOnce;
       });
     });
+
+    it("Offer: WBOA9(ERC20) <=> AssetContractShared with lazy-minting", async () => {
+      const { seaport } = fixture;
+
+      // new tokenId for AssetContractShared
+      const tokenQuantity = 100;
+      const tokenIndex = BigNumber.from(1);
+
+      tokenId = createTokenId(fulfiller.address, tokenIndex, tokenQuantity);
+      console.log(
+        "Combined tokenId: %s (%s)",
+        tokenId.toString(),
+        tokenId.toHexString()
+      );
+
+      console.log(
+        "fulfiller: ",
+        await assetToken.balanceOf(fulfiller.address, tokenId)
+      );
+
+
+      // create an order
+      standardCreateOrderInput = {
+        allowPartialFills: true,
+
+        offer: [
+          {
+            amount: parseEther("10").toString(),
+            token: wboaToken.address,
+          },
+        ],
+        consideration: [
+          {
+            itemType: ItemType.ERC1155,
+            token: lazyMintAdapter.address,
+            amount: assetTokenAmount,
+            identifier: tokenId.toString(),
+            recipient: offerer.address,
+          },
+        ],
+        // 2.5% fee
+        fees: [{ recipient: zone.address, basisPoints: 250 }],
+      };
+
+      const { executeAllActions } = await seaport.createOrder(
+        standardCreateOrderInput,
+        offerer.address
+      );
+
+      const order = await executeAllActions();
+
+      expect(order.parameters.orderType).eq(OrderType.PARTIAL_OPEN);
+
+      const orderStatus = await seaport.getOrderStatus(
+        seaport.getOrderHash(order.parameters)
+      );
+
+      const ownerToTokenToIdentifierBalances =
+        await getBalancesForFulfillOrder(
+          order,
+          fulfiller.address,
+          multicallProvider
+        );
+
+      const { actions } = await seaport.fulfillOrder({
+        order,
+        unitsToFill: 2,
+        accountAddress: fulfiller.address,
+        domain: BOASPACE_DOMAIN,
+      });
+
+      // approve to SharedStorefrontLazyMintAdapter
+      await assetToken
+        .connect(fulfiller)
+        .setApprovalForAll(lazyMintAdapter.address, true);
+      expect(
+        await assetToken.isApprovedForAll(
+          fulfiller.address,
+          lazyMintAdapter.address
+        )
+      ).to.be.true;
+
+      // We also need to approve ERC-20 as we send that out as fees..
+      const approvalAction = actions[0];
+      expect(approvalAction).to.deep.equal({
+        type: "approval",
+        token: wboaToken.address,
+        identifierOrCriteria: "0",
+        itemType: ItemType.ERC20,
+        transactionMethods: approvalAction.transactionMethods,
+        operator: seaport.contract.address,
+      });
+
+      await approvalAction.transactionMethods.transact();
+      expect(
+        await wboaToken.allowance(fulfiller.address, seaport.contract.address)
+      ).to.eq(MAX_INT);
+
+      const fulfillAction = actions[1];
+      expect(fulfillAction).to.be.deep.equal({
+        type: "exchange",
+        transactionMethods: fulfillAction.transactionMethods,
+      });
+
+      const transaction = await fulfillAction.transactionMethods.transact();
+      expect(transaction.data.slice(-8)).to.eq(BOASPACE_TAG);
+      const receipt = await transaction.wait();
+
+      const offererAssetTokenBalance = await assetToken.balanceOf(
+        offerer.address,
+        tokenId
+      );
+      const fulfillerAssetTokenBalance = await assetToken.balanceOf(
+        fulfiller.address,
+        tokenId
+      );
+      expect(offererAssetTokenBalance).eq(BigNumber.from(2));
+      expect(fulfillerAssetTokenBalance).eq(BigNumber.from(98));
+
+      await verifyBalancesAfterFulfill({
+        ownerToTokenToIdentifierBalances,
+        order,
+        orderStatus,
+        unitsToFill: 2,
+        fulfillerAddress: fulfiller.address,
+        multicallProvider,
+        fulfillReceipt: receipt,
+      });
+
+      // Double check nft balances
+      expect(fulfillStandardOrderSpy).calledOnce;
+    });
   }
 );

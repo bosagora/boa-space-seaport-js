@@ -87,6 +87,9 @@ describeWithFixture(
         )) as SharedStorefrontLazyMintAdapter;
       console.log("SharedStorefrontLazyMintAdapter:", lazyMintAdapter.address);
 
+      // set the shared proxy of assetToken to SharedStorefrontLazyMintAdapter
+      await assetToken.connect(admin).addSharedProxyAddress(lazyMintAdapter.address);
+
       // Deploy WBOA9 contract
       const wboa9Factory = await ethers.getContractFactory("WBOA9");
       wboaToken = (await wboa9Factory.connect(admin).deploy()) as WBOA9;

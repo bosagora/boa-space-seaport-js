@@ -105,6 +105,15 @@ describeWithFixture(
         const { seaport } = fixture;
         console.log("seaport:", seaport.contract.address);
 
+        // Deposit BOA from offerer to WBOA
+        await wboaToken
+          .connect(offerer)
+          .deposit({ value: parseEther("20").toString() });
+      });
+
+      it("Offer: WBOA9(ERC20) <=> AssetContractShared", async () => {
+        const { seaport } = fixture;
+
         // mint AssetContractShared
         const creatorContract = assetToken.connect(fulfiller);
         const tokenQuantity = 100;
@@ -132,11 +141,7 @@ describeWithFixture(
           await assetToken.balanceOf(fulfiller.address, tokenId)
         );
 
-        // Deposit BOA from offerer to WBOA
-        await wboaToken
-          .connect(offerer)
-          .deposit({ value: parseEther("20").toString() });
-
+        // create an order
         standardCreateOrderInput = {
           allowPartialFills: true,
 
@@ -158,11 +163,7 @@ describeWithFixture(
           // 2.5% fee
           fees: [{ recipient: zone.address, basisPoints: 250 }],
         };
-      });
-
-      it("Offer: WBOA9(ERC20) <=> AssetContractShared", async () => {
-        const { seaport } = fixture;
-
+        
         const { executeAllActions } = await seaport.createOrder(
           standardCreateOrderInput,
           offerer.address

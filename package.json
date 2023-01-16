@@ -1,16 +1,16 @@
 {
-  "name": "@opensea/seaport-js",
-  "version": "1.0.8",
-  "description": "[Seaport](https://github.com/ProjectOpenSea/seaport) is a new marketplace protocol for safely and efficiently buying and selling NFTs. This is a JavaScript library intended to make interfacing with the contract reasonable and easy.",
+  "name": "@boaspace/seaport-js",
+  "version": "1.0.0",
+  "description": "[BoaSpace Contracts](https://github.com/bosagora/boa-space-contracts) is a new marketplace protocol for safely and efficiently buying and selling NFTs. This is a JavaScript library intended to make interfacing with the contract reasonable and easy.",
   "license": "MIT",
-  "author": "OpenSea Developers",
-  "homepage": "https://github.com/ProjectOpenSea/seaport-js#readme",
+  "author": "BoaSpace Developers",
+  "homepage": "https://github.com/bosagora/boa-space-seaport-js#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ProjectOpenSea/seaport-js.git"
+    "url": "git+https://github.com/bosagora/boa-space-seaport-js.git"
   },
   "bugs": {
-    "url": "https://github.com/ProjectOpenSea/seaport-js/issues"
+    "url": "https://github.com/bosagora/boa-space-seaport-js/issues"
   },
   "main": "lib/index.js",
   "files": [

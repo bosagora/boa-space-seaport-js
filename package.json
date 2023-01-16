@@ -1,5 +1,5 @@
 {
-  "name": "@boaspace/seaport-js",
+  "name": "boa-space-seaport-js",
   "version": "1.0.0",
   "description": "[BoaSpace Contracts](https://github.com/bosagora/boa-space-contracts) is a new marketplace protocol for safely and efficiently buying and selling NFTs. This is a JavaScript library intended to make interfacing with the contract reasonable and easy.",
   "license": "MIT",

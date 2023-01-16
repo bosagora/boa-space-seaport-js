@@ -8,7 +8,7 @@
 
 # BoaSpace Seaport.js
 
-[BoaSpace Seaport][boaspace-contract-link] is a new marketplace protocol for safely and efficiently buying and selling NFTs. This is a JavaScript library intended to make interfacing with the contract reasonable and easy.
+[BoaSpace Contracts][boaspace-contract-link] is a new marketplace protocol for safely and efficiently buying and selling NFTs. This is a JavaScript library intended to make interfacing with the contract reasonable and easy.
 
 - [Synopsis](#synopsis)
 - [Installation](#installation)
@@ -27,7 +27,7 @@ We recommend using [nvm](https://github.com/nvm-sh/nvm) to manage Node.js versio
 Then, in your project, run:
 
 ```console
-npm install --save @opensea/seaport-js
+npm install --save boa-space-seaport-js
 ```
 
 ## Getting Started
@@ -39,7 +39,7 @@ Instantiate your instance of seaport using your ethers provider:
 #### Through a browser provider (i.e. Metamask)
 
 ```js
-import { Seaport } from "@opensea/seaport-js";
+import { Seaport } from "boa-space-seaport-js";
 import { ethers } from "ethers";
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -50,7 +50,7 @@ const seaport = new Seaport(provider);
 #### Through a RPC Provider (i.e. Alchemy)
 
 ```js
-import { Seaport } from "@opensea/seaport-js";
+import { Seaport } from "boa-space-seaport-js";
 import { ethers } from "ethers";
 
 const provider = new ethers.providers.JsonRpcProvider(
@@ -63,7 +63,7 @@ const seaport = new Seaport(provider);
 #### With custom signer
 
 ```js
-import { Seaport } from "@opensea/seaport-js";
+import { Seaport } from "boa-space-seaport-js";
 import { ethers } from "ethers";
 
 // Provider must be provided to the signer when supplying a custom signer
@@ -165,17 +165,17 @@ See [the contributing guide](CONTRIBUTING.md) for detailed instructions on how t
 [MIT](LICENSE) Copyright 2022 Ozone Networks, Inc.
 
 [boaspace-contract-link]: https://github.com/bosagora/boa-space-contracts
-[version-badge]: https://img.shields.io/github/package-json/v/ProjectOpenSea/seaport-js
-[version-link]: https://github.com/ProjectOpenSea/seaport-js/releases
-[npm-badge]: https://img.shields.io/npm/v/@opensea/seaport-js?color=red
-[npm-link]: https://www.npmjs.com/package/@opensea/seaport-js
-[ci-badge]: https://github.com/ProjectOpenSea/seaport-js/actions/workflows/main.yaml/badge.svg
-[ci-link]: https://github.com/ProjectOpenSea/seaport-js/actions/workflows/main.yaml
-[coverage-badge]: https://codecov.io/gh/ProjectOpenSea/seaport-js/branch/main/graph/badge.svg
-[coverage-link]: https://codecov.io/gh/ProjectOpenSea/seaport-js
-[license-badge]: https://img.shields.io/github/license/ProjectOpenSea/seaport-js
-[license-link]: https://github.com/ProjectOpenSea/seaport-js/blob/main/LICENSE
+[version-badge]: https://img.shields.io/github/package-json/v/boa-space-seaport-js
+[version-link]: https://github.com/bosagora/boa-space-seaport-js/releases
+[npm-badge]: https://img.shields.io/npm/v/boa-space-seaport-js?color=red
+[npm-link]: https://www.npmjs.com/package/boa-space-seaport-js
+[ci-badge]: https://github.com/bosagora/boa-space-seaport-js/actions/workflows/main.yaml/badge.svg
+[ci-link]: https://github.com/bosagora/boa-space-seaport-js/actions/workflows/main.yaml
+[coverage-badge]: https://codecov.io/gh/boa-space-seaport-js/branch/main/graph/badge.svg
+[coverage-link]: https://codecov.io/gh/boa-space-seaport-js
+[license-badge]: https://img.shields.io/github/license/boa-space-seaport-js
+[license-link]: https://github.com/bosagora/boa-space-seaport-js/blob/v0.x.x/LICENSE
 [docs-badge]: https://img.shields.io/badge/Seaport.js-documentation-informational
-[docs-link]: https://github.com/ProjectOpenSea/seaport-js/blob/main/README.md#getting-started
+[docs-link]: https://github.com/bosagora/boa-space-seaport-js/blob/v0.x.x/README.md#getting-started
 [discussions-badge]: https://img.shields.io/badge/Seaport.js-discussions-blueviolet
-[discussions-link]: https://github.com/ProjectOpenSea/seaport-js/discussions
+[discussions-link]: https://github.com/bosagora/boa-space-seaport-js/discussions

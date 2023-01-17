@@ -17,10 +17,10 @@ import {
   getBalancesForFulfillOrder,
   verifyBalancesAfterFulfill,
 } from "../utils/balance";
-import { describeWithFixture } from "../utils/setup";
+import {describeWithContractsCreation, describeWithFixture} from "../utils/setup";
 import { createTokenId } from "../../utils/parseTokenId";
 
-describeWithFixture(
+describeWithContractsCreation(
   "Buying multiple listings or accepting multiple offers through SharedStorefrontLazyMintAdapter",
   (fixture) => {
     let offerer: SignerWithAddress;
@@ -59,41 +59,9 @@ describeWithFixture(
       const symbol = "BOASPACESTORE";
       const templateURI = "";
 
-      const assetTokenFactory = await ethers.getContractFactory(
-        "AssetContractShared"
-      );
-      assetToken = (await assetTokenFactory
-        .connect(admin)
-        .deploy(
-          name,
-          symbol,
-          ethers.constants.AddressZero,
-          templateURI,
-          ethers.constants.AddressZero
-        )) as AssetContractShared;
-      await assetToken.deployed();
-      console.log("AssetContractShared:", assetToken.address);
-
-      // Deploy SharedStorefrontLazyMintAdapter contract
-      const lazyMintAdapterFactory = await ethers.getContractFactory(
-        "SharedStorefrontLazyMintAdapter"
-      );
-      lazyMintAdapter = (await lazyMintAdapterFactory
-        .connect(admin)
-        .deploy(
-          seaport.contract.address,
-          ZeroAddress,
-          assetToken.address
-        )) as SharedStorefrontLazyMintAdapter;
-      console.log("SharedStorefrontLazyMintAdapter:", lazyMintAdapter.address);
-
-      // set the shared proxy of assetToken to SharedStorefrontLazyMintAdapter
-      await assetToken.connect(admin).addSharedProxyAddress(lazyMintAdapter.address);
-
-      // Deploy WBOA9 contract
-      const wboa9Factory = await ethers.getContractFactory("WBOA9");
-      wboaToken = (await wboa9Factory.connect(admin).deploy()) as WBOA9;
-      console.log("WBOA9:", wboaToken.address);
+      assetToken = seaport.assetToken;
+      lazyMintAdapter = seaport.lazymintAdapter;
+      wboaToken = seaport.wboaToekn;
     });
 
     afterEach(() => {

@@ -87,7 +87,7 @@ export class Seaport {
 
   public assetToken: AssetContractSharedContract;
 
-  public wboaToekn: WBOA9Contract;
+  public wboaToken: WBOA9Contract;
 
   private provider: providers.Provider;
 
@@ -163,7 +163,7 @@ export class Seaport {
         this.multicallProvider
     ) as AssetContractSharedContract;
 
-    this.wboaToekn = new Contract(
+    this.wboaToken = new Contract(
         overrides?.wboaTokenAddress ?? WBOA9_CONTRACT_ADDRESS,
         WBOA9ABI,
         this.multicallProvider

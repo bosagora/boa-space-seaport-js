@@ -61,7 +61,7 @@ describeWithContractsCreation(
 
       assetToken = seaport.assetToken;
       lazyMintAdapter = seaport.lazymintAdapter;
-      wboaToken = seaport.wboaToekn;
+      wboaToken = seaport.wboaToken;
     });
 
     afterEach(() => {

@@ -1,7 +1,4 @@
 import type { DomainRegistry as TypeChainDomainRegistryContract } from "./typechain/DomainRegistry";
-import type { SharedStorefrontLazyMintAdapter as TypeChainSharedStorefrontLazyMintAdapterContract } from "./typechain/SharedStorefrontLazyMintAdapter";
-import type { AssetContractShared as TypeChainAssetContractSharedContract } from "./typechain/AssetContractShared";
-import type { WBOA9 as TypeChainWBOA9Contract } from "./typechain/WBOA9";
 import type {
   OrderStruct,
   Seaport as TypeChainSeaportContract,
@@ -20,7 +17,6 @@ import {
 import { ItemType, OrderType } from "./constants";
 import type { ERC721 } from "./typechain/ERC721";
 import type { ERC20 } from "./typechain/ERC20";
-import {SharedStorefrontLazyMintAdapter} from "./typechain/SharedStorefrontLazyMintAdapter";
 
 export type SeaportConfig = {
   // Used because fulfillments may be invalid if confirmations take too long. Default buffer is 5 minutes
@@ -34,9 +30,9 @@ export type SeaportConfig = {
 
   overrides?: {
     contractAddress?: string;
-    lazymintAdapterAddress?: string;
-    assetTokenAddress?: string;
-    wboaTokenAddress?: string;
+    lazymintAdapterAddress?: string;  // DEPRECATED
+    assetTokenAddress?: string;       // DEPRECATED
+    wboaTokenAddress?: string;        // DEPRECATED
     domainRegistryAddress?: string;
     // A default conduit key to use when creating and fulfilling orders
     defaultConduitKey?: string;
@@ -320,9 +316,3 @@ export type SeaportContract = TypeChainSeaportContract & {
 };
 
 export type DomainRegistryContract = TypeChainDomainRegistryContract;
-
-export type SharedStorefrontLazyMintAdapterContract = TypeChainSharedStorefrontLazyMintAdapterContract;
-
-export type AssetContractSharedContract = TypeChainAssetContractSharedContract;
-
-export type WBOA9Contract = TypeChainWBOA9Contract;

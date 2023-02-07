@@ -10,9 +10,6 @@ import {
 import { formatBytes32String, _TypedDataEncoder } from "ethers/lib/utils";
 import { DomainRegistryABI } from "./abi/DomainRegistry";
 import { SeaportABI } from "./abi/Seaport";
-import { SharedStorefrontLazyMintAdapterABI } from "./abi/SharedStorefrontLazyMintAdapter";
-import { AssetContractSharedABI } from "./abi/AssetContractShared";
-import { WBOA9ABI } from "./abi/WBOA9";
 import {
   SEAPORT_CONTRACT_NAME,
   SEAPORT_CONTRACT_VERSION,
@@ -24,9 +21,6 @@ import {
   OrderType,
   CROSS_CHAIN_SEAPORT_ADDRESS,
   DOMAIN_REGISTRY_ADDRESS,
-  SHARED_STOREFRONT_LAZY_MINT_ADAPTER_ADDRESS,
-  ASSET_CONTRACT_SHARED_ADDRESS,
-  WBOA9_CONTRACT_ADDRESS,
 } from "./constants";
 import type {
   AssetContractSharedContract,
@@ -47,9 +41,7 @@ import type {
   ContractMethodReturnType,
   MatchOrdersFulfillment,
   SeaportContract,
-  SharedStorefrontLazyMintAdapterContract,
   Signer,
-  WBOA9Contract,
 } from "./types";
 import { getApprovalActions } from "./utils/approval";
 import {
@@ -82,12 +74,6 @@ export class Seaport {
   public contract: SeaportContract;
 
   public domainRegistry: DomainRegistryContract;
-
-  public lazymintAdapter: SharedStorefrontLazyMintAdapterContract;
-
-  public assetToken: AssetContractSharedContract;
-
-  public wboaToken: WBOA9Contract;
 
   private provider: providers.Provider;
 
@@ -150,24 +136,6 @@ export class Seaport {
       DomainRegistryABI,
       this.multicallProvider
     ) as DomainRegistryContract;
-
-    this.lazymintAdapter = new Contract(
-        overrides?.lazymintAdapterAddress ?? SHARED_STOREFRONT_LAZY_MINT_ADAPTER_ADDRESS,
-        SharedStorefrontLazyMintAdapterABI,
-        this.multicallProvider
-    ) as SharedStorefrontLazyMintAdapterContract;
-
-    this.assetToken = new Contract(
-        overrides?.assetTokenAddress ?? ASSET_CONTRACT_SHARED_ADDRESS,
-        AssetContractSharedABI,
-        this.multicallProvider
-    ) as AssetContractSharedContract;
-
-    this.wboaToken = new Contract(
-        overrides?.wboaTokenAddress ?? WBOA9_CONTRACT_ADDRESS,
-        WBOA9ABI,
-        this.multicallProvider
-    ) as WBOA9Contract;
 
     this.config = {
       ascendingAmountFulfillmentBuffer,

@@ -54,14 +54,42 @@ describeWithContractsCreation(
       console.log("offerer:", offerer.address);
       console.log("fulfiller:", fulfiller.address);
 
+      // Deploy WBOA9 contract
+      const wboa9Factory = await ethers.getContractFactory("WBOA9");
+      wboaToken = (await wboa9Factory.connect(admin).deploy()) as WBOA9;
+
       // Deploy AssetContractShared contract
       const name = "BOASPACE Collections";
       const symbol = "BOASPACESTORE";
       const templateURI = "";
+      const assetTokenFactory = await ethers.getContractFactory(
+          "AssetContractShared"
+      );
+      assetToken = (await assetTokenFactory
+          .connect(admin)
+          .deploy(
+              name,
+              symbol,
+              ethers.constants.AddressZero,
+              templateURI,
+              ethers.constants.AddressZero
+          )) as AssetContractShared;
+      await assetToken.deployed();
 
-      assetToken = seaport.assetToken;
-      lazyMintAdapter = seaport.lazymintAdapter;
-      wboaToken = seaport.wboaToken;
+      // Deploy SharedStorefrontLazyMintAdapter contract
+      const lazyMintAdapterFactory = await ethers.getContractFactory(
+          "SharedStorefrontLazyMintAdapter"
+      );
+      lazyMintAdapter = (await lazyMintAdapterFactory
+          .connect(admin)
+          .deploy(
+            seaport.contract.address,
+              ZeroAddress,
+              assetToken.address
+          )) as SharedStorefrontLazyMintAdapter;
+
+      // set the shared proxy of assetToken to SharedStorefrontLazyMintAdapter
+      await assetToken.connect(admin).addSharedProxyAddress(lazyMintAdapter.address);
     });
 
     afterEach(() => {
@@ -71,7 +99,6 @@ describeWithContractsCreation(
     describe("[Accept offer] I want to accept a partial offer for my AssetContractShared", async () => {
       beforeEach(async () => {
         const { seaport } = fixture;
-        console.log("seaport:", seaport.contract.address);
 
         // Deposit BOA from offerer to WBOA
         await wboaToken

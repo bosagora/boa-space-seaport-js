@@ -10,7 +10,6 @@ import type {
 import chai from "chai";
 import chaiAsPromised from "chai-as-promised";
 import sinonChai from "sinon-chai";
-import {AssetContractShared, SharedStorefrontLazyMintAdapter, WBOA9} from "../../typechain";
 
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
@@ -115,49 +114,9 @@ export const describeWithContractsCreation = (
       const domainRegistry = await DomainRegistryFactory.deploy();
       await domainRegistry.deployed();
 
-      // Deploy AssetContractShared contract
-      const name = "BOASPACE Collections";
-      const symbol = "BOASPACESTORE";
-      const templateURI = "";
-      const assetTokenFactory = await ethers.getContractFactory(
-          "AssetContractShared"
-      );
-      const assetToken = (await assetTokenFactory
-          .connect(admin)
-          .deploy(
-              name,
-              symbol,
-              ethers.constants.AddressZero,
-              templateURI,
-              ethers.constants.AddressZero
-          )) as AssetContractShared;
-      await assetToken.deployed();
-
-      // Deploy SharedStorefrontLazyMintAdapter contract
-      const lazyMintAdapterFactory = await ethers.getContractFactory(
-          "SharedStorefrontLazyMintAdapter"
-      );
-      const lazyMintAdapter = (await lazyMintAdapterFactory
-          .connect(admin)
-          .deploy(
-              seaportContract.address,
-              ZeroAddress,
-              assetToken.address
-          )) as SharedStorefrontLazyMintAdapter;
-
-      // set the shared proxy of assetToken to SharedStorefrontLazyMintAdapter
-      await assetToken.connect(admin).addSharedProxyAddress(lazyMintAdapter.address);
-
-      // Deploy WBOA9 contract
-      const wboa9Factory = await ethers.getContractFactory("WBOA9");
-      const wboaToken = (await wboa9Factory.connect(admin).deploy()) as WBOA9;
-
       const seaport = new Seaport(ethers.provider, {
         overrides: {
           contractAddress: seaportContract.address,
-          lazymintAdapterAddress: lazyMintAdapter.address,
-          assetTokenAddress: assetToken.address,
-          wboaTokenAddress: wboaToken.address,
           domainRegistryAddress: domainRegistry.address,
         },
       });

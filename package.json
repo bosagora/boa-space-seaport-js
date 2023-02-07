@@ -33,7 +33,7 @@
     "prettier:check": "prettier --check .",
     "prettier:check:package.json": "prettier-package-json --list-different",
     "prettier:fix": "prettier --write .",
-    "prettier:fix:boaspace": "prettier --write src/__tests__/boaspace/*.ts"
+    "prettier:fix:boa": "prettier --write src/__tests__/boaspace/*.ts"
   },
   "types": "lib/index.d.ts",
   "resolutions": {

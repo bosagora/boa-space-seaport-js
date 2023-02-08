@@ -23,7 +23,6 @@ import {
   DOMAIN_REGISTRY_ADDRESS,
 } from "./constants";
 import type {
-  AssetContractSharedContract,
   SeaportConfig,
   CreateOrderAction,
   CreateOrderInput,

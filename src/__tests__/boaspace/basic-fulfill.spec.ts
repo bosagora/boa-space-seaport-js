@@ -391,9 +391,9 @@ describeWithFixture(
 
         // mint AssetContractShared
         const creatorContract = assetToken.connect(fulfiller);
-        const tokenQuantity = Number(process.env.ASSET_NFT_QUANTITY || "1");
-        const tokenIndex = BigNumber.from(process.env.ASSET_NFT_INDEX || "");
-        const data = process.env.ASSET_NFT_DATA || "";
+        const tokenQuantity = 100;
+        const tokenIndex = BigNumber.from(1);
+        const data = "https://ipfs.io/ipfs/QmXdYWxw3di8Uys9fmWTmdariUoUgBCsdVfHtseL2dtEP7";
         const buffer = ethers.utils.toUtf8Bytes(data);
 
         tokenId = createTokenId(fulfiller.address, tokenIndex, tokenQuantity);

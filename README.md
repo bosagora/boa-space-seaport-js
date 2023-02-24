@@ -6,6 +6,20 @@
 [![Docs][docs-badge]][docs-link]
 [![Discussions][discussions-badge]][discussions-link]
 
+# How to test
+```shell
+# make a copy of the repository
+git clone https://github.com/bosagora/boa-space-seaport-js.git
+cd boa-space-seaport-js
+
+# package install
+yarn install
+
+# test
+npm test
+```
+
+
 # BoaSpace Seaport.js
 
 [BoaSpace Contracts][boaspace-contract-link] is a new marketplace protocol for safely and efficiently buying and selling NFTs. This is a JavaScript library intended to make interfacing with the contract reasonable and easy.

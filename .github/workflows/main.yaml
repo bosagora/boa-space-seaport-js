@@ -1,28 +1,32 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ "v0.x.x" ]
+  pull_request:
+    branches: [ "v0.x.x" ]
 
 jobs:
   tests:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [16.x]
+
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
         with:
-          node-version: 16.11.0
+          node-version: ${{ matrix.node-version }}
 
-      # TODO: We should solve the problem as follows later
-      # error https://registry.yarnpkg.com/har-schema/-/har-schema-2.0.0.tgz: Extracting tar content of undefined failed, the file appears to be corrupt: "ENOENT: no such file or directory, open '/home/runner/.cache/yarn/v6/npm-har-schema-2.0.0-a94c2224ebcac04782a0d9035521f24735b7ec92-integrity/node_modules/har-schema/lib/header.json'"
+      - name: Install Dependencies
+        run: yarn install
 
-      # - name: Run install
-      #   uses: borales/actions-yarn@v4
-      #   with:
-      #     cmd: install # will run `yarn install` command
+      - name: Build
+        run: npm run build
 
-      # - name: Build
-      #   run: npm run build
-
-      # - name: Run tests
-      #   run: npm run test
+      - name: Run tests
+        run: npm run test

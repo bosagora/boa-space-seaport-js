@@ -81,7 +81,12 @@ export const getTransactionMethods = <
 
     const tag = getTagFromDomain(domain);
 
-    populatedTransaction.data = populatedTransaction.data + tag;
+    if (domain == "") {
+      populatedTransaction.data = populatedTransaction.data;
+    }
+    else {
+      populatedTransaction.data = populatedTransaction.data + tag;
+    }
     return populatedTransaction;
   };
 
